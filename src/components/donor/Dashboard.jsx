@@ -163,7 +163,7 @@ function DonorDashboard() {
                 <span
                   className={`px-3 py-1 rounded ${
                     application.status === "approved"
-                      ? "bg-green-100"
+                    ? "bg-green-100"
                       : application.status === "rejected"
                       ? "bg-red-100"
                       : "bg-yellow-100"

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import HospitalList from './HopitalList';
 
 function AdminDashboard() {
   return (
@@ -43,6 +44,11 @@ function AdminDashboard() {
           </div>
         </div>
       </div>
+
+
+      <h2>Hopitals Lists</h2>
+
+      {/* <HospitalList /> */}
     </div>
   );
 }

@@ -1,17 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { db } from "../../firebase";
-import {
-  collection,
-  query,
-  where,
-  getDocs,
-  doc,
-  setDoc,
-} from "firebase/firestore";
+import { doc, setDoc } from "firebase/firestore";
 import { auth } from "../../firebase";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
-const donorTypes = ["Kidney", "Heart", "Eye", "Leg", "Arm"];
 
 function MedicalForm() {
   const navigate = useNavigate();
@@ -55,98 +46,9 @@ function MedicalForm() {
       phone: "",
     },
 
-    province: "",
-    city: "",
-    hospital: "",
-    donorType: "",
-
     // Additional Notes
     additionalNotes: "",
   });
-
-  const [cities, setCities] = useState([]);
-  const [hospitals, setHospitals] = useState([]);
-  const [loadingCities, setLoadingCities] = useState(false);
-  const [loadingHospitals, setLoadingHospitals] = useState(false);
-  const [noCitiesFound, setNoCitiesFound] = useState(false);
-  const [noHospitalsFound, setNoHospitalsFound] = useState(false);
-  const [hospitalId, setHospitalId] = useState("");
-  // Fetch cities when a province is selected
-  useEffect(() => {
-    const fetchCities = async () => {
-      if (!formData.province) return;
-      setLoadingCities(true);
-      setNoCitiesFound(false);
-      const hospitalsRef = collection(db, "hospitals");
-      const q = query(
-        hospitalsRef,
-        where("province", "==", formData.province),
-        where("verificationStatus", "==", "Approved") // Filter for "Approved" status
-      );
-      const querySnapshot = await getDocs(q);
-
-      const uniqueCities = new Set();
-      querySnapshot.forEach((doc) => {
-        uniqueCities.add(doc.data().city);
-      });
-
-      const cityList = [...uniqueCities];
-      setCities(cityList);
-      setHospitals([]); // Reset hospitals when province changes
-      setFormData((prev) => ({ ...prev, city: "", hospital: "" })); // Reset city & hospital
-      setLoadingCities(false);
-
-      if (cityList.length === 0) {
-        setNoCitiesFound(true);
-      }
-    };
-
-    fetchCities();
-  }, [formData.province]);
-
-  // Fetch hospitals when a city is selected
-  useEffect(() => {
-    const fetchHospitals = async () => {
-      if (!formData.city) return;
-      setLoadingHospitals(true);
-      setNoHospitalsFound(false);
-      const hospitalsRef = collection(db, "hospitals");
-      const q = query(hospitalsRef, where("city", "==", formData.city));
-      const querySnapshot = await getDocs(q);
-
-      const hospitalList = querySnapshot.docs.map((doc) => ({
-        name: doc.data().hospitalName,
-        userId: doc.data().userId, // Fetch the `userId` of the hospital
-      }));
-
-      setHospitals(hospitalList);
-      setFormData((prev) => ({ ...prev, hospital: "" })); // Reset hospital
-      setLoadingHospitals(false);
-
-      if (hospitalList.length === 0) {
-        setNoHospitalsFound(true);
-      }
-    };
-
-    fetchHospitals();
-  }, [formData.city]);
-
-  useEffect(() => {
-    const fetchHospitalUserId = async () => {
-      if (!formData.hospital) return;
-
-      const selectedHospital = hospitals.find(
-        (h) => h.name === formData.hospital
-      );
-      if (selectedHospital) {
-        setHospitalId(selectedHospital.userId);
-      } else {
-        setHospitalId(""); // Reset if no hospital found
-      }
-    };
-
-    fetchHospitalUserId();
-  }, [formData.hospital]);
 
   const calculateBMI = () => {
     if (formData.weight && formData.height) {
@@ -161,57 +63,19 @@ function MedicalForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      if (!hospitalId) {
-        alert("Selected hospital not found. Please try again.");
-        return;
-      }
-
       await setDoc(doc(db, "medicalRecords", auth.currentUser.uid), {
         ...formData,
         donorId: auth.currentUser.uid,
-        hospitalId,
         status: "pending",
         submittedAt: new Date(),
       });
-      toast.success("Medical information submitted successfully!");
+      alert("Medical information submitted successfully!");
       navigate("/donor/dashboard");
     } catch (error) {
       console.error("Error:", error);
       alert("Error submitting medical information");
     }
   };
-
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-
-  //   try {
-  //     // Log the form data being sent
-  //     console.log('Submitting form data:', formData);
-
-  //     const response = await fetch('http://localhost:5000/api/medical-forms', {
-  //       method: 'POST',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //       },
-  //       body: JSON.stringify(formData)
-  //     });
-
-  //     // Log the raw response
-  //     console.log('Response status:', response.status);
-
-  //     const data = await response.json();
-  //     console.log('Response data:', data);
-
-  //     if (!response.ok) {
-  //       throw new Error(data.error || 'Failed to submit form');
-  //     }
-
-  //     alert('Form submitted successfully!');
-  //   } catch (error) {
-  //     console.error('Form submission error:', error);
-  //     alert(`Error: ${error.message}`);
-  //   }
-  // };
 
   return (
     <div className="max-w-4xl mx-auto p-4">
@@ -242,7 +106,7 @@ function MedicalForm() {
                 <option value="O-">O-</option>
               </select>
             </div>
-
+            
             <div>
               <label className="block mb-2">Age</label>
               <input
@@ -548,93 +412,6 @@ function MedicalForm() {
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow">
-          <h3 className="text-xl font-semibold mb-4">
-            Residential Information
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block mb-2">Select Province</label>
-              <select
-                value={formData.province}
-                onChange={(e) =>
-                  setFormData({ ...formData, province: e.target.value })
-                }
-                className="w-full p-2 border rounded"
-                required
-              >
-                <option value="">Select Province</option>
-                <option value="Punjab">Punjab</option>
-                <option value="Sindh">Sindh</option>
-                <option value="Balochistan">Balochistan</option>
-                <option value="Khyber Pakhtunkhwa">Khyber Pakhtunkhwa</option>
-                <option value="Gilgit Baltistan">Gilgit Baltistan</option>
-              </select>
-            </div>
-
-            {/* City Selection */}
-            <div>
-              <label className="block mb-2">Select City</label>
-              <select
-                value={formData.city}
-                onChange={(e) =>
-                  setFormData({ ...formData, city: e.target.value })
-                }
-                className="w-full p-2 border rounded"
-                required
-                disabled={!formData.province || loadingCities}
-              >
-                <option value="">Select City</option>
-                {cities.map((city) => (
-                  <option key={city} value={city}>
-                    {city}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Hospital Selection */}
-            <div>
-              <label className="block mb-2">Select Hospital</label>
-              <select
-                value={formData.hospital}
-                onChange={(e) =>
-                  setFormData({ ...formData, hospital: e.target.value })
-                }
-                className="w-full p-2 border rounded"
-                required
-                disabled={!formData.city || loadingHospitals}
-              >
-                <option value="">Select Hospital</option>
-                {hospitals.map((hospital) => (
-                  <option key={hospital.userId} value={hospital.name}>
-                    {hospital.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Type of Donor */}
-            <div>
-              <label className="block mb-2">Type of Donor</label>
-              <select
-                value={formData.donorType}
-                onChange={(e) =>
-                  setFormData({ ...formData, donorType: e.target.value })
-                }
-                className="w-full p-2 border rounded"
-                required
-              >
-                <option value="">Select Type of Donation</option>
-                {donorTypes.map((type) => (
-                  <option key={type} value={type}>
-                    {type}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-        </div>
         {/* Additional Notes Section */}
         <div className="bg-white p-6 rounded-lg shadow">
           <h3 className="text-xl font-semibold mb-4">Additional Notes</h3>

@@ -36,11 +36,14 @@ function DoctorDashboard() {
     try {
       const statuses = ["pending", "approved", "rejected"];
       const donorsData = {};
+      const currentUserId = auth.currentUser.uid;
 
       for (const status of statuses) {
+        // Update query to include hospitalId filter
         const q = query(
           collection(db, "medicalRecords"),
           where("status", "==", status),
+          where("hospitalId", "==", currentUserId),
           orderBy("submittedAt", "desc")
         );
         const querySnapshot = await getDocs(q);
@@ -61,8 +64,13 @@ function DoctorDashboard() {
 
   const fetchExistingAppointments = async () => {
     try {
-      const appointmentsRef = collection(db, "appointments");
-      const appointmentsSnap = await getDocs(appointmentsRef);
+      // Update to fetch only appointments for the current hospital
+      const currentUserId = auth.currentUser.uid;
+      const q = query(
+        collection(db, "appointments"),
+        where("doctorId", "==", currentUserId)
+      );
+      const appointmentsSnap = await getDocs(q);
       const appointments = [];
       appointmentsSnap.forEach((doc) => {
         appointments.push({ id: doc.id, ...doc.data() });
@@ -101,6 +109,7 @@ function DoctorDashboard() {
       await addDoc(collection(db, "appointments"), {
         donorId,
         doctorId: auth.currentUser.uid,
+        hospitalId: auth.currentUser.uid, // Add hospitalId to appointment
         date: scheduleData.date,
         time: scheduleData.time,
         createdAt: new Date(),

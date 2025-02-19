@@ -82,7 +82,7 @@ function DonorManagement() {
                   <p>Blood Type: {donor.bloodType}</p>
                   <p>Status: {donor.status}</p>
                   <p className="text-sm text-gray-600">
-                    Submitted: {new Date(donor.submittedAt?.toDate()).toLocaleDateString()}
+                    {/* Submitted: {new Date(donor.submittedAt?.toDate()).toLocaleDateString()} */}
                   </p>
                 </div>
                 <div className="space-x-2">

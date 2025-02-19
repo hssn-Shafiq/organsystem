@@ -63,9 +63,16 @@ function Navbar() {
                 </>
               )}
               {userRole === "doctor" && (
+                <>
+
                 <Link to="/doctor/dashboard" className="text-white">
                   Dashboard
                 </Link>
+                <Link to="/doctor/applications" className="text-white">
+                  Application Status
+                </Link>
+                </>
+                
               )}
               {userRole === "admin" && (
                 <>

@@ -12,6 +12,11 @@ import AdminDashboard from "./components/admin/Dashboard";
 import DoctorManagement from "./components/admin/DoctorManagement";
 import DonorManagement from "./components/admin/DonorManagement";
 import Reports from "./components/admin/Reports";
+import BecomeHospital from "./Pages/BecomeHospital";
+import HospitalApplications from "./components/doctor/Application";
+import NotFoundPage from "./Pages/NotFoundPage";
+import Home from "./Pages/Home";
+
 
 function App() {
   return (
@@ -19,8 +24,11 @@ function App() {
       <Router>
         <Navbar />
         <Routes>
+        <Route path="*" element={<NotFoundPage />} />
+        <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/register-as-hospital" element={<BecomeHospital />} />
           <Route
             path="/donor/dashboard"
             element={
@@ -34,6 +42,14 @@ function App() {
             element={
               <PrivateRoute role="doctor">
                 <DoctorDashboard />
+              </PrivateRoute>
+            }
+          />
+            <Route
+            path="/doctor/applications"
+            element={
+              <PrivateRoute role="doctor">
+                <HospitalApplications />
               </PrivateRoute>
             }
           />
