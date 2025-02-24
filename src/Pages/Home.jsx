@@ -1,18 +1,26 @@
 import { Link } from "react-router-dom";
-
+ import React from "react";
+ import '../'
+import HeroHome from "../components/Hero-Home";
+import '../../src/App.css'
+import DonationSystem from "../components/Donation-System";
+import WorkStation from "../components/work-station";
+import Statistic from "../components/Statistics";
+import SuccessStories from "../components/Success-Stories";
+import TestimonialSection from "../components/Testimonials";
+import PartnerSection from "../components/partner";
+import Footer from "../components/Footer";
 const Home = () => {
   return (
     <>
-      <div className="container bg-dark text-light  p-5">
-        <div className="row ">
-          <div className="col-md-12 p-5 d-flex flex-column align-items-center justify-content-center">
-            <h2 className="fs-2 fw-bolder">Wants to registered as a Hospital</h2>
-            <button className="btn btn-danger  fw-bold mt-4">
-              <Link to="register-as-hospital">Join Now </Link>
-            </button>
-          </div>
-        </div>
-      </div>
+     <HeroHome />
+     <DonationSystem />
+     <WorkStation />
+     <  Statistic />
+     <SuccessStories />
+     <TestimonialSection />
+     <PartnerSection />
+     <Footer />
     </>
   );
 };
