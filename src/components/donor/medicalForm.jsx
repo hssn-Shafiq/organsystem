@@ -17,6 +17,7 @@ function MedicalForm() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     // Basic Information
+    donorName: "",
     bloodType: "",
     age: "",
     weight: "",
@@ -243,6 +244,18 @@ function MedicalForm() {
               </select>
             </div>
 
+            <div>
+              <label className="block mb-2">Name</label>
+              <input
+                type="text"
+                value={formData.donorName}
+                onChange={(e) =>
+                  setFormData({ ...formData, donorName: e.target.value })
+                }
+                className="w-full p-2 border rounded"
+                required
+              />
+            </div>
             <div>
               <label className="block mb-2">Age</label>
               <input

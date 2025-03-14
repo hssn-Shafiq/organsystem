@@ -16,7 +16,8 @@ import BecomeHospital from "./Pages/BecomeHospital";
 import HospitalApplications from "./components/doctor/Application";
 import NotFoundPage from "./Pages/NotFoundPage";
 import Home from "./Pages/Home";
-
+import Appointments from "./components/donor/Appointments";
+import HospitalAppointments from "./components/doctor/HospitalAppointments";
 
 function App() {
   return (
@@ -24,8 +25,8 @@ function App() {
       <Router>
         <Navbar />
         <Routes>
-        <Route path="*" element={<NotFoundPage />} />
-        <Route path="/" element={<Home />} />
+          <Route path="*" element={<NotFoundPage />} />
+          <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/register-as-hospital" element={<BecomeHospital />} />
@@ -45,11 +46,19 @@ function App() {
               </PrivateRoute>
             }
           />
-            <Route
+          <Route
             path="/doctor/applications"
             element={
               <PrivateRoute role="doctor">
                 <HospitalApplications />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/doctor/appointments"
+            element={
+              <PrivateRoute role="doctor">
+                <HospitalAppointments />
               </PrivateRoute>
             }
           />
@@ -69,7 +78,14 @@ function App() {
               </PrivateRoute>
             }
           />
-
+          <Route
+            path="/donor/appointments"
+            element={
+              <PrivateRoute role="donor">
+                <Appointments />
+              </PrivateRoute>
+            }
+          />
           {/* admin routes */}
           <Route
             path="/admin/dashboard"

@@ -59,7 +59,7 @@ function Register() {
             className="w-full p-2 border rounded"
           >
             <option value="donor">Donor</option>
-            <option value="doctor">Doctor</option>
+            <option value="receipent">Receipent</option>
           </select>
         </div>
         <button

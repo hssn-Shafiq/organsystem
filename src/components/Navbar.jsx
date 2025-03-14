@@ -4,6 +4,8 @@ import { UserContext } from "../contexts/UserContext";
 import { auth, db } from "../firebase";
 import { doc, getDoc } from "firebase/firestore";
 import { FaUserCircle, FaBars, FaTimes } from "react-icons/fa";
+import { FaUserDoctor } from "react-icons/fa6";
+
 import logo from "../assets/images/Green Natural Organic Logo.png";
 
 function Navbar() {
@@ -23,7 +25,7 @@ function Navbar() {
 
         if (userSnap.exists()) {
           const userData = userSnap.data();
-          setUserName(userData.name || "User");
+          setUserName(userData.email || "User");
           setUserRole(userData.role || "donor");
         } else {
           console.warn("No user profile found.");
@@ -56,57 +58,133 @@ function Navbar() {
         <>
           {userRole === "donor" && (
             <>
-              <Link to="/donor/dashboard" className="text-[#973131] block py-2 hover:text-opacity-80 transition-colors" onClick={() => setIsMenuOpen(false)}>
+              <Link
+                to="/donor/dashboard"
+                className="text-[#973131] block py-2 hover:text-opacity-80 transition-colors"
+                onClick={() => setIsMenuOpen(false)}
+              >
                 Dashboard
               </Link>
-              <Link to="/donor/profile" className="text-[#973131] block py-2 hover:text-opacity-80 transition-colors" onClick={() => setIsMenuOpen(false)}>
+              <Link
+                to="/donor/profile"
+                className="text-[#973131] block py-2 hover:text-opacity-80 transition-colors"
+                onClick={() => setIsMenuOpen(false)}
+              >
                 Profile
+              </Link>
+              <Link
+                to="/donor/appointments"
+                className="text-[#973131] block py-2 hover:text-opacity-80 transition-colors"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Appointments
               </Link>
             </>
           )}
           {userRole === "doctor" && (
             <>
-              <Link to="/doctor/dashboard" className="text-[#973131] block py-2 hover:text-opacity-80 transition-colors" onClick={() => setIsMenuOpen(false)}>
+              <Link
+                to="/doctor/dashboard"
+                className="text-[#973131] block py-2 hover:text-opacity-80 transition-colors"
+                onClick={() => setIsMenuOpen(false)}
+              >
                 Dashboard
               </Link>
-              <Link to="/doctor/applications" className="text-[#973131] block py-2 hover:text-opacity-80 transition-colors" onClick={() => setIsMenuOpen(false)}>
+              <Link
+                to="/doctor/applications"
+                className="text-[#973131] block py-2 hover:text-opacity-80 transition-colors"
+                onClick={() => setIsMenuOpen(false)}
+              >
                 Application Status
+              </Link>
+              <Link
+                to="/doctor/appointments"
+                className="text-[#973131] block py-2 hover:text-opacity-80 transition-colors"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Appointments
               </Link>
             </>
           )}
           {userRole === "admin" && (
             <>
-              <Link to="/admin/dashboard" className="text-[#973131] block py-2 hover:text-opacity-80 transition-colors" onClick={() => setIsMenuOpen(false)}>
+              <Link
+                to="/admin/dashboard"
+                className="text-[#973131] block py-2 hover:text-opacity-80 transition-colors"
+                onClick={() => setIsMenuOpen(false)}
+              >
                 Dashboard
               </Link>
-              <Link to="/admin/donor-management" className="text-[#973131] block py-2 hover:text-opacity-80 transition-colors" onClick={() => setIsMenuOpen(false)}>
+              <Link
+                to="/admin/donor-management"
+                className="text-[#973131] block py-2 hover:text-opacity-80 transition-colors"
+                onClick={() => setIsMenuOpen(false)}
+              >
                 Donor Management
               </Link>
-              <Link to="/admin/doctor-management" className="text-[#973131] block py-2 hover:text-opacity-80 transition-colors" onClick={() => setIsMenuOpen(false)}>
+              <Link
+                to="/admin/doctor-management"
+                className="text-[#973131] block py-2 hover:text-opacity-80 transition-colors"
+                onClick={() => setIsMenuOpen(false)}
+              >
                 Doctor Management
               </Link>
-              <Link to="/admin/reports" className="text-[#973131] block py-2 hover:text-opacity-80 transition-colors" onClick={() => setIsMenuOpen(false)}>
+              <Link
+                to="/admin/reports"
+                className="text-[#973131] block py-2 hover:text-opacity-80 transition-colors"
+                onClick={() => setIsMenuOpen(false)}
+              >
                 Reports
               </Link>
             </>
           )}
-          <button onClick={handleLogout} className="text-[#973131] block py-2 hover:text-opacity-80 transition-colors">
+          <button
+            onClick={handleLogout}
+            className="text-[#973131] block py-2 hover:text-opacity-80 transition-colors text-light"
+          >
             Logout
           </button>
           <div className="flex items-center space-x-2 text-[#973131] py-2">
-            <FaUserCircle size={24} />
+            {userRole === "doctor" ? (
+              <FaUserDoctor
+                size={24}
+                style={{
+                  background: "#973131",
+                  color: "white",
+                  borderRadius: "50%",
+                  padding: "2px",
+                }}
+              />
+            ) : (
+              <FaUserCircle size={24} />
+            )}
             <span className="font-medium">
-              {userName} ({userRole})
+              {userName.split("@")[0]} ({userRole})
             </span>
           </div>
         </>
       ) : (
         <>
-          <Link to="/login" className="text-[#973131] block py-2 hover:text-opacity-80 transition-colors" onClick={() => setIsMenuOpen(false)}>
+          <Link
+            to="/login"
+            className="text-[#973131] block py-2 hover:text-opacity-80 transition-colors"
+            onClick={() => setIsMenuOpen(false)}
+          >
             Login
           </Link>
-          <Link to="/register" className="text-[#973131] block py-2 hover:text-opacity-80 transition-colors" onClick={() => setIsMenuOpen(false)}>
+          <Link
+            to="/register"
+            className="text-[#973131] block py-2 hover:text-opacity-80 transition-colors"
+            onClick={() => setIsMenuOpen(false)}
+          >
             Register
+          </Link>
+          <Link
+            to="/register-as-hospital"
+            className="text-[#973131] block py-2 hover:text-opacity-80 transition-colors"
+            onClick={() => setIsMenuOpen(false)}
+          >
+            Register as a Hospital
           </Link>
         </>
       )}
@@ -121,7 +199,7 @@ function Navbar() {
         </Link>
 
         {/* Mobile Menu Button - Hidden on Desktop */}
-        <button 
+        <button
           className="block md:hidden bg-transparent border-0 text-[#973131] focus:outline-none"
           onClick={toggleMenu}
           aria-label="Toggle menu"
@@ -131,19 +209,21 @@ function Navbar() {
 
         {/* Mobile Menu Overlay - Hidden on Desktop */}
         {isMenuOpen && (
-          <div 
+          <div
             className="md:hidden fixed inset-0 bg-black bg-opacity-50 z-30"
             onClick={toggleMenu}
           />
         )}
 
         {/* Mobile Menu - Hidden on Desktop */}
-        <div className={`
+        <div
+          className={`
           md:hidden fixed top-0 right-0 h-full w-64 bg-white shadow-lg
           transform transition-transform duration-300 ease-in-out z-40
-          ${isMenuOpen ? 'translate-x-0' : 'translate-x-full'}
-        `}>
-          <button 
+          ${isMenuOpen ? "translate-x-0" : "translate-x-full"}
+        `}
+        >
+          <button
             className="absolute top-4 right-4 bg-transparent border-0 text-[#973131] focus:outline-none"
             onClick={toggleMenu}
             aria-label="Close menu"
